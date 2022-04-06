@@ -189,7 +189,7 @@ for event in longpoll.listen():
 
             elif message.split(" ")[0] in donate:  # выдать донат посредством LuckPerms
                 if id in adminsid:
-                    if len(message.split(" ") == 4):
+                    if len(message.split(" ")) == 4:
                         com1 = rcon.command(
                             f'lp user {message.split(" ")[1]} parent addtemp {message.split(" ")[2]} {message.split(" ")[3]}')
                         sendmessage(id, f'Выдал привелегию {message.split(" ")[2]} игроку {message.split(" ")[1]} '
