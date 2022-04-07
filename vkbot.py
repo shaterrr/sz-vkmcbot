@@ -133,7 +133,7 @@ for event in longpoll.listen():
             elif message.split(" ")[0] in unban:  # если из массива анбан
                 if id in adminsid:  # если айди в списке айди админом
                     nick = message.split(" ")[1]  # берём ник за переменную, зачем не знаю ахахаахха
-                    com1 = rcon.command(f"unban {nick}")
+                    com1 = rcon.command(f"pardon {nick}")
                     if 'Ошибка' in com1:  # если в выводе команды ошибка, то пишем это написавшему
                         sendmessage(id,
                                     f'Произошла ошибка при разбане игрока {nick}. Игрок существует? Команда написана '
