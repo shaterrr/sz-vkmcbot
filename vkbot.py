@@ -73,6 +73,7 @@ try:  # пробуем выполнить тело кода
     connect = rcon.login(rconPass)  # вводим пароль ркона
 except Exception as error:  # если вылезла ошибка (например сервер лежит и не отвечает) пишем админу причину
     sendmessage(myvkid, f'Ошибка подключения к серверу по причине {error}!')
+else: sendmessage(myvkid, 'Бот успешно запущен!')
 
 # Слушаем longpoll(Сообщения)
 for event in longpoll.listen():
