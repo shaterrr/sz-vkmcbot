@@ -207,18 +207,18 @@ for event in longpoll.listen():
 
             elif message[0] == 'донат':
                 sendmessage(id,f'Вы можете приобрести донат здесь: {donatelink}')
-            elif message[0] == '/':  # отправить команду ркон если её нет в этом скрипте чреез слеш
-                rconcommand(message.replace("/", ""), id)
-            elif message[0] == '!':  # если первый СИМВОЛ сообщения - !, то перенаправляем сообщение админу
-                sendmessage(id, f'Передал админу. Вообще было бы легче если бы ты написал ему лично: @{myvkid}')
-                for i in range(len(adminsid)):
-                    sendmessage(adminsid[i], f'@id{str(id)} написал: {message.replace("!", "")}')
+            elif message.split(" ")[0] == 'команда':  # отправить команду ркон если её нет в этом скрипте чреез слеш
+                rconcommand(message.replace("команда", ""), id)
+                # то что ниже ломает бота если человек отправил стикер
+          #  elif message[0] == '!':  # если первый СИМВОЛ сообщения - !, то перенаправляем сообщение админу
+         #       sendmessage(id, f'Передал админу. Вообще было бы легче если бы ты написал ему лично: @{myvkid}')
+         #       for i in range(len(adminsid)):
+           #         sendmessage(adminsid[i], f'@id{str(id)} написал: {message.replace("!", "")}')
 
             elif message.split(" ")[0] == 'пися':  # это просто ржака
                 sendmessage(id, 'попа')
 
             else:  # если ничего из этого списка не было написано - пишет вот это
-                sendmessage(id, 'Неизвестная команда. Чтобы написать сообщение админу, напиши перед '
-                                'сообщением восклицательный знак')
+                sendmessage(id, f'Неизвестная команда. Если у вас есть вопрос, то пишите админу @{myvkid}')
 
 # код карчое являестя собственостью серёжи юдина vk.com/szarkan, не воруйте пожалуйста !!!
