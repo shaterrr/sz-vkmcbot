@@ -6,6 +6,7 @@ import slovarik
 from slovarik import *
 from mctools import errors
 from time import sleep
+import random
 
 group_token = grouptoken
 my_token = mytoken
@@ -205,18 +206,16 @@ for event in longpoll.listen():
                 else:
                     sendmessage(id, 'Ты не админ!')
 
-            elif message[0] == 'донат':
+            # команды для обычных юзеров
+            elif message.split(" ")[0] == 'донат':
                 sendmessage(id,f'Вы можете приобрести донат здесь: {donatelink}')
-            elif message.split(" ")[0] == 'команда':  # отправить команду ркон если её нет в этом скрипте чреез слеш
+            elif message.split(" ")[0] == 'ком':  # отправить команду ркон если её нет в этом скрипте чреез слеш
                 rconcommand(message.replace("команда", ""), id)
-                # то что ниже ломает бота если человек отправил стикер
-          #  elif message[0] == '!':  # если первый СИМВОЛ сообщения - !, то перенаправляем сообщение админу
-         #       sendmessage(id, f'Передал админу. Вообще было бы легче если бы ты написал ему лично: @{myvkid}')
-         #       for i in range(len(adminsid)):
-           #         sendmessage(adminsid[i], f'@id{str(id)} написал: {message.replace("!", "")}')
-
             elif message.split(" ")[0] == 'пися':  # это просто ржака
                 sendmessage(id, 'попа')
+            elif message.split(" ")[0] == 'юмореска':
+                randhumoreska(id)
+            
 
             else:  # если ничего из этого списка не было написано - пишет вот это
                 sendmessage(id, f'Неизвестная команда. Если у вас есть вопрос, то пишите админу @{myvkid}')
