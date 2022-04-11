@@ -2,10 +2,8 @@ import vk_api
 from mctools import RCONClient  # Import the RCONClient
 from vk_api.longpoll import VkLongPoll, VkEventType
 from mcstatus import MinecraftServer, querier
-import slovarik
+import random
 from slovarik import *
-from mctools import errors
-from time import sleep
 
 group_token = grouptoken
 my_token = mytoken
@@ -38,25 +36,17 @@ def rconcommand(com, vid):
 
 def banplayer(message, id):
     if id in adminsid:  # если айди не в массиве айди админом
-        if 3 < len(message.split(" ")) < 5:  # аахахахах если слов в сообщении больше 3 но меньше 5
+        if 3 < len(message.split(" ")):  # аахахахах если слов в сообщении больше 3 но меньше 5
             nick = message.split(" ")[1]  # записывает ник
             time = message.split(" ")[2]  # записывает на какое время забанить
-            reason = message.split(" ")[3]  # записаывает причину
+            r = message.split(" ")[3:20]
+            reason = ' '.join(r)  # записаывает причину
             com1 = rcon.command(f"tempban {nick} {time} {reason}")  # и банит по всем трём параметрам
             if 'Ошибка' in com1:
                 sendmessage(id, f'Произошла ошибка при бане игрока {nick}. Игрок существует? Команда написана '
                                 f'правильно?')  # и если ошибка при вводе сообщения на сервер то выводит вот так
             else:
                 sendmessage(id, f'Забанил {nick} на {time} по причине {reason}')
-        elif len(message.split(" ")) == 3:  # если слов в сообщении 3
-            nick = message.split(" ")[1]  # записывает ник
-            reason = message.split(" ")[2]  # и причину
-            com1 = rcon.command(f'ban {nick} {reason}')  # и банит перманентно
-            if 'Ошибка' in com1:
-                sendmessage(id, f'Произошла ошибка при бане игрока {nick}. Игрок существует? Команда написана '
-                                f'правильно?')
-            else:
-                sendmessage(id, f'Перманентно забанил {nick} по причнине {reason}')
         else:
             sendmessage(id, 'Команда "бан" введена неправильно. Возможно не написана причина? '
                             'Правильное написание команды: бан {игрок} {время} {причина} для временного бана, '
@@ -64,6 +54,29 @@ def banplayer(message, id):
     else:
         sendmessage(id, 'Ты не админ!')
 
+def permabanplayer(message, id):
+    if id in adminsid:  # если айди не в массиве айди админом
+        nick = message.split(" ")[1]  # записывает ник
+        r = message.split(" ")[3:20]
+        reason = ' '.join(r)  # записаывает причину
+        com1 = rcon.command(f"tempban {nick} {reason}")  # и банит по всем трём параметрам
+        if 'Ошибка' in com1:
+                sendmessage(id, f'Произошла ошибка при бане игрока {nick}. Игрок существует? Команда написана '
+                            f'правильно?')  # и если ошибка при вводе сообщения на сервер то выводит вот так
+        else:
+                sendmessage(id, f'Забанил {nick} перманентно по причине {reason}')
+    else:
+        sendmessage(id, 'Ты не админ!')
+
+def randhumoreska(id):
+    posts = myt.method('wall.get', {'owner_id': -92876084, 'offset': 0, 'count': 100})["items"]
+    posts_strings = [post['text'] for post in posts]
+    rand = random.randint(1, 100)
+    humoreska = posts_strings[rand]
+    if humoreska == '':
+        sendmessage(id, posts_strings[rand + 1])
+    else:
+        sendmessage(id, humoreska)
 
 try:  # пробуем выполнить тело кода
     server = MinecraftServer.lookup(f'{serverip}:{serverport}')  # в переменную server засовываем ваш сервер
@@ -104,8 +117,6 @@ for event in longpoll.listen():
                 com1 = com1.replace("[0m", "")  # убираем из полученого результата ненужные символы
                 sendmessage(id, com1)  # пишем пользователю это
 
-
-
             elif message.split(" ")[0] in whitelist:  # если ПЕРВОЕ СЛОВО это одно из списка 'whitelist', то
                 if id in adminsid:
                     if len(message.split(" ")) > 1:  # проверяем является ли айди написавшего - вашим
@@ -129,6 +140,8 @@ for event in longpoll.listen():
 
             elif message.split(" ")[0] in ban:  # если введеное сообщение содержит в себе слово из массива бан
                 banplayer(message, id)  # выполняем функцЫю, она сверху
+            elif message.split(" ")[0] in permaban:
+                permabanplayer(message, id)
 
             elif message.split(" ")[0] in unban:  # если из массива анбан
                 if id in adminsid:  # если айди в списке айди админом
@@ -145,22 +158,24 @@ for event in longpoll.listen():
 
             elif message.split(" ")[0] in kick:  # ну тут кикает кароче, принимает либо 3 значения, либо 2
                 if id in adminsid:
-                    if len(message.split(" ")) == 3:  # если 3 слова введено - кикает игрока с причиной
-                        com1 = rcon.command(f'kick {message.split(" ")[1]} {message.split(" ")[2]}')
+                    if len(message.split(" ")) > 2:
+                        nick = message.split(" ")[1]
+                        r = message.split(" ")[3:20]
+                        reason = ' '.join(r)  # записаывает причину
+                        com1 = rcon.command(f'kick {nick} {reason}')
                         if 'Invalid name or UUID' in com1:  # проверяет есть ли ошибка в нике
                             sendmessage(id, f'Не удалось кикнуть. Такого игрока нет, либо ник написан неправильно')
                         else:
                             sendmessage(id,
-                                        f'Кикнул {message.split(" ")[1]} по причине {message.split(" ")[2]}, вывод {com1}')
-                    elif len(message.split(" ")) == 2:  # два слова - кикает без причины
+                                            f'Кикнул {message.split(" ")[1]} по причине {message.split(" ")[2]}')
+                    elif len(message.split(" ")) == 2:
                         com1 = rcon.command(f'kick {message.split(" ")[1]}')
                         if 'Invalid name or UUID' in com1:  # проверяет есть ли ошибка в нике
                             sendmessage(id, f'Не удалось кикнуть. Такого игрока нет, либо ник написан неправильно')
                         else:
-                            sendmessage(id, f'Кикнул {message.split(" ")[1]} без причины, вывод {com1}')
+                            sendmessage(id, f'Кикнул {message.split(" ")[1]} без причины')
                     else:  # ну и если слов не 3 и не 2 то выводит это
-                        sendmessage(id, 'Не удалось кикнуть. Написана ли причина? Причина состоит больше чем из одного '
-                                        'слова?')
+                        sendmessage(id, 'Не удалось кикнуть. Ты чето напутал)))')
                 else:
                     sendmessage(id, 'Ты не админ!')
 
@@ -204,21 +219,17 @@ for event in longpoll.listen():
                                         '{название привелегии} {игрок} {время}')
                 else:
                     sendmessage(id, 'Ты не админ!')
+            elif message[0] == 'команда':  # отправить команду ркон если её нет в этом скрипте командой "команда"
+                rconcommand(message.replace("команда", ""), id)  # также будет вывод команды
 
             elif message[0] == 'донат':
                 sendmessage(id,f'Вы можете приобрести донат здесь: {donatelink}')
-            elif message[0] == '/':  # отправить команду ркон если её нет в этом скрипте чреез слеш
-                rconcommand(message.replace("/", ""), id)
-            elif message[0] == '!':  # если первый СИМВОЛ сообщения - !, то перенаправляем сообщение админу
-                sendmessage(id, f'Передал админу. Вообще было бы легче если бы ты написал ему лично: @{myvkid}')
-                for i in range(len(adminsid)):
-                    sendmessage(adminsid[i], f'@id{str(id)} написал: {message.replace("!", "")}')
-
             elif message.split(" ")[0] == 'пися':  # это просто ржака
                 sendmessage(id, 'попа')
+            elif message.split(" ")[0] == 'юмореска':
+                randhumoreska(id)
 
             else:  # если ничего из этого списка не было написано - пишет вот это
-                sendmessage(id, 'Неизвестная команда. Чтобы написать сообщение админу, напиши перед '
-                                'сообщением восклицательный знак')
+                sendmessage(id, f'Неизвестная команда. Если у вас есть вопрос - @{myvkid}')
 
 # код карчое являестя собственостью серёжи юдина vk.com/szarkan, не воруйте пожалуйста !!!
