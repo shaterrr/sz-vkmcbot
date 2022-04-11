@@ -4,6 +4,7 @@ players = ('игроки', 'buhjrb', 'online', 'players', 'онлайн')
 ban = ('бан', 'забанить', 'ban', 'tempban', ',fy', 'pf,fybnm', 'ифт', 'пермач', 'пермбан', 'permban', 'gthvfx',
        'зукьифт')
 unban = ('разбан', 'разбанить', 'hfp,fy', 'hfp,fybnm', 'unban', 'pardon', 'гтифт')
+permaban = ('пермач', 'пермабан','permaban')
 whitelist = ('вайтлист', 'вл', 'wl', 'whitelist', 'dfqnkbcn', 'dk')
 kick = ('кик', 'кикнуть', 'kick', 'rbr', 'rbryenm', 'лшсл')
 tp = ('tp', 'тп', 'телепортировать', 'teleport')
