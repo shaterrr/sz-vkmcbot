@@ -2,14 +2,11 @@ import vk_api
 from mctools import RCONClient, errors
 from vk_api.longpoll import VkLongPoll, VkEventType
 from mcstatus import MinecraftServer
-from slovarik_minecraft import *
+from slovarik import *
 import random
 
-group_token = grouptoken
-my_token = mytoken
-
-grt = vk_api.VkApi(token=group_token)  # берём токен группы
-myt = vk_api.VkApi(token=my_token)  # берём ваш токен
+grt = vk_api.VkApi(token=grouptoken)  # берём токен группы
+myt = vk_api.VkApi(token=mytoken)  # берём ваш токен
 give = grt.get_api()  # берём апи из токена группы
 give2 = myt.get_api()  # берём апи из вашего токена
 longpoll = VkLongPoll(grt)  # подключаемся к вк пулу с помощью токена группыы
@@ -20,7 +17,7 @@ def sendmessage(id, text):
 
 # определяем метод sendmessage который принимает значение id и text, и отправляет text человеку с айди id
 
-def rconcommand(com, vid):
+def rconcommand(com, vid):  # просто отправляет ркон команду и пишет вывод команды
     if id in adminsid:
         try:
             command = rcon.command(com)
@@ -38,7 +35,7 @@ def banplayer(message, id):
         if 3 < len(message.split(" ")):  # аахахахах если слов в сообщении больше 3 но меньше 5
             nick = message.split(" ")[1]  # записывает ник
             time = message.split(" ")[2]  # записывает на какое время забанить
-            r = message.split(" ")[3:20]
+            r = message.split(" ")[3:20]  # разделяет причину от других слов в сообщении
             reason = ' '.join(r)  # записаывает причину
             com1 = rcon.command(f"tempban {nick} {time} {reason}")  # и банит по всем трём параметрам
             if 'Ошибка' in com1:
@@ -56,9 +53,9 @@ def banplayer(message, id):
 def permabanplayer(message, id):
     if id in adminsid:  # если айди не в массиве айди админом
         nick = message.split(" ")[1]  # записывает ник
-        r = message.split(" ")[3:20]
+        r = message.split(" ")[3:20]  # разделяет причину от других слов в сообщении
         reason = ' '.join(r)  # записаывает причину
-        com1 = rcon.command(f"tempban {nick} {reason}")  # и банит по всем трём параметрам
+        com1 = rcon.command(f"tempban {nick} {reason}")  # и банит по двум параметрам
         if 'Ошибка' in com1:
                 sendmessage(id, f'Произошла ошибка при бане игрока {nick}. Игрок существует? Команда написана '
                             f'правильно?')  # и если ошибка при вводе сообщения на сервер то выводит вот так
@@ -68,14 +65,14 @@ def permabanplayer(message, id):
         sendmessage(id, 'Ты не админ!')
 
 def randhumoreska(id):
-    posts = myt.method('wall.get', {'owner_id': -92876084, 'offset': 0, 'count': 100})["items"]
-    posts_strings = [post['text'] for post in posts]
-    rand = random.randint(0, 50)
-    humoreska = posts_strings[rand]
-    if humoreska == '':
-        sendmessage(id, posts_strings[rand + 1])
+    posts = myt.method('wall.get', {'owner_id': -92876084, 'offset': 0, 'count': 100})["items"]  # берем посты из паблика юморески на каждый день
+    posts_strings = [post['text'] for post in posts]  # засовываем их в переменную
+    rand = random.randint(0, 50)  # берём рандомное число
+    humoreska = posts_strings[rand]  # засовываем рандомный пост в переменную
+    if humoreska == '':  # если юмореска пустая (а так бывает, например картинка без текста)
+        sendmessage(id, posts_strings[rand + 1])  # то выдаём следующую по списку
     else:
-        sendmessage(id, humoreska)
+        sendmessage(id, humoreska)  # иначе - отправляем юмореску пользователю
 
 try:  # пробуем выполнить тело кода
     server = MinecraftServer.lookup(f'{serverip}:{serverport}')  # в переменную server засовываем ваш сервер
@@ -235,10 +232,10 @@ try:
 
                 else:  # если ничего из этого списка не было написано - пишет вот это
                     sendmessage(id, f'Неизвестная команда. Если у вас есть вопрос, то пишите админу @id{myvkid}')
-except Exception as error:
+except Exception as error:  # если чота случилось с вк апи
     try:
-        sendmessage(myvkid, f'Я лёг по причине {error}')
+        sendmessage(myvkid, f'Я лёг по причине {error}')  # пытаемся отправить сообщение с ошибкой
     except Exception as e:
-        print(f'Вк апи наебнулось по причине {e}')
+        print(f'Вк апи наебнулось по причине {e}')  # а если даже сообщение не отправляется, то пишем ошибку в консоль
 
 # код карчое являестя собственостью серёжи юдина vk.com/szarkan, не воруйте пожалуйста !!!
