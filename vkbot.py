@@ -70,7 +70,7 @@ def permabanplayer(message, id):
 def randhumoreska(id):
     posts = myt.method('wall.get', {'owner_id': -92876084, 'offset': 0, 'count': 100})["items"]
     posts_strings = [post['text'] for post in posts]
-    rand = random.randint(1, 100)
+    rand = random.randint(0, 50)
     humoreska = posts_strings[rand]
     if humoreska == '':
         sendmessage(id, posts_strings[rand + 1])
@@ -234,7 +234,7 @@ try:
                     randhumoreska(id)
 
                 else:  # если ничего из этого списка не было написано - пишет вот это
-                    sendmessage(id, f'Неизвестная команда. Если у вас есть вопрос, то пишите админу @{myvkid}')
+                    sendmessage(id, f'Неизвестная команда. Если у вас есть вопрос, то пишите админу @id{myvkid}')
 except Exception as error:
     try:
         sendmessage(myvkid, f'Я лёг по причине {error}')
