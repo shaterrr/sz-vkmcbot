@@ -2,7 +2,7 @@ import vk_api
 from mctools import RCONClient, errors
 from vk_api.longpoll import VkLongPoll, VkEventType
 from mcstatus import MinecraftServer
-from slovarik import *
+from slovarik_minecraft import *
 import random
 
 grt = vk_api.VkApi(token=grouptoken)  # берём токен группы
@@ -216,8 +216,6 @@ try:
                                             '{название привелегии} {игрок} {время}')
                     else:
                         sendmessage(id, 'Ты не админ!')
-                elif message[0] == 'команда':  # отправить команду ркон если её нет в этом скрипте командой "команда"
-                    rconcommand(message.replace("команда", ""), id)  # также будет вывод команды
 
                 # команды для обычных юзеров
                 elif message.split(" ")[0] == 'донат':
