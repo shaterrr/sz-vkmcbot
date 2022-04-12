@@ -222,7 +222,7 @@ try:
                     sendmessage(id,f'Вы можете приобрести донат здесь: {donatelink}')
 
                 elif message.split(" ")[0] == 'ком':  # отправить команду ркон если её нет в этом скрипте чреез слеш
-                    rconcommand(message.replace("команда", ""), id)
+                    rconcommand(message.replace("ком", ""), id)
                 elif message.split(" ")[0] == 'пися':  # это просто ржака
                     sendmessage(id, 'попа')
                 elif message.split(" ")[0] == 'юмореска':
