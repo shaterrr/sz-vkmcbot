@@ -1,5 +1,5 @@
 import vk_api
-from mctools import RCONClient
+from mctools import RCONClient, errors
 from vk_api.longpoll import VkLongPoll, VkEventType
 from mcstatus import MinecraftServer
 from slovarik_minecraft import *
@@ -239,7 +239,6 @@ except Exception as error:
     try:
         sendmessage(myvkid, f'Я лёг по причине {error}')
     except Exception as e:
-        print(f'dead xd')
-else:
-    print(f'Вк апи наебнулось по причине {error}')
+        print(f'Вк апи наебнулось по причине {e}')
+
 # код карчое являестя собственостью серёжи юдина vk.com/szarkan, не воруйте пожалуйста !!!
