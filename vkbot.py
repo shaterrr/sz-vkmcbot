@@ -2,7 +2,7 @@ import vk_api
 from mctools import RCONClient, errors
 from vk_api.longpoll import VkLongPoll, VkEventType
 from mcstatus import MinecraftServer
-from slovarik import *
+from slovarik_minecraft import *
 import random
 
 grt = vk_api.VkApi(token=grouptoken)  # берём токен группы
