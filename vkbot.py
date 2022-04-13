@@ -2,7 +2,7 @@ import vk_api
 from mctools import RCONClient, errors
 from vk_api.longpoll import VkLongPoll, VkEventType
 from mcstatus import MinecraftServer
-from slovarik_minecraft import *
+from slovarik import *
 import random
 
 group_t = vk_api.VkApi(token=grouptoken)  # берём токен группы
@@ -69,7 +69,7 @@ def randhumoreska(id):
     posts_strings = [post['text'] for post in posts]  # засовываем их в переменную
     rand = random.randint(0, 50)  # берём рандомное число
     humoreska = posts_strings[rand]  # засовываем рандомный пост в переменную
-    if humoreska == '':  # если юмореска пустая (а так бывает, например картинка без текста)
+    if len(humoreska) == 0:  # если юмореска пустая (а так бывает, например картинка без текста)
         sendmessage(id, posts_strings[rand + 1])  # то выдаём следующую по списку
     else:
         sendmessage(id, humoreska)  # иначе - отправляем юмореску пользователю
