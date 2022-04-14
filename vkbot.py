@@ -2,7 +2,7 @@ import vk_api
 from mctools import RCONClient, errors
 from vk_api.longpoll import VkLongPoll, VkEventType
 from mcstatus import MinecraftServer
-from slovarik import *
+from slovarik_minecraft import *
 import random
 
 group_t = vk_api.VkApi(token=grouptoken)  # берём токен группы
@@ -201,12 +201,15 @@ try:
                         sendmessage(id, 'Ты не админ!')
 
                 elif message.split(" ")[0] in donate:  # выдать донат посредством LuckPerms
-                    if id in adminsid:
+                    if id in adminsid and permissions == 0:
                         if len(message.split(" ")) == 4:
+                            nick = message.split(" ")[1]
+                            perm = message.split(" ")[2]
+                            time = message.split(" ")[3]
                             com = rcon.command(
-                                f'lp user {message.split(" ")[1]} parent addtemp {message.split(" ")[2]} {message.split(" ")[3]}')
-                            sendmessage(id, f'Выдал привелегию {message.split(" ")[2]} игроку {message.split(" ")[1]} '
-                                            f'на {message.split(" ")[3]}, вывод команды: {com}')
+                                f'lp user {nick} parent addtemp {perm} {time}')
+                            sendmessage(id, f'Выдал привелегию {perm} игроку {nick} '
+                                            f'на {time}, вывод команды: {com}')
                         elif len(message.split(" ")) < 4:
                             sendmessage(id, 'Команда введена неправильно, отсутствуют '
                                             'параметры. Правильно: выдатьдонат '
@@ -214,6 +217,21 @@ try:
                         elif len(message.split(" ")) > 4:
                             sendmessage(id, 'Слишком много параметров! Правильно: выдатьдонат '
                                             '{название привелегии} {игрок} {время}')
+                    elif id in adminsid and permissions == 1:
+                        if len(message.split(" ")) == 3:
+                            nick = message.split(" ")[1]
+                            perm = message.split(" ")[2]
+                            com = rcon.command(
+                                f'pex user {nick} add {perm}')
+                            sendmessage(id, f'Выдал привелегию {perm} игроку {nick} '
+                                            f', вывод команды: {com}')
+                        elif len(message.split(" ")) < 3:
+                            sendmessage(id, 'Команда введена неправильно, отсутствуют '
+                                            'параметры. Правильно: выдатьдонат {ник}'
+                                            '{название привелегии}')
+                        elif len(message.split(" ")) > 3:
+                            sendmessage(id, 'Слишком много параметров! Правильно: выдатьдонат {ник}'
+                                            '{название привелегии} ')
                     else:
                         sendmessage(id, 'Ты не админ!')
 
@@ -237,3 +255,4 @@ except Exception as error:  # если чота случилось с вк ап�
         print(f'Вк апи наебнулось по причине {e}')  # а если даже сообщение не отправляется, то пишем ошибку в консоль
 
 # код карчое являестя собственостью серёжи юдина vk.com/szarkan, не воруйте пожалуйста !!!
+# dotmix пидорас кстати
