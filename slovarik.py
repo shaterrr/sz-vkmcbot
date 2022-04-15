@@ -1,4 +1,3 @@
-from vkbot import myvkid, sendmessage
 # это слова которые можно использовать для каждой команды, можете добавить свои или убрать лишние
 ping = ('пинг', 'ping', 'gbyu', 'тпс')
 players = ('игроки', 'buhjrb', 'online', 'players', 'онлайн')
