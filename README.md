@@ -70,7 +70,7 @@ pip install vk-api
 - вл {добавить/удалить} {игрок} - добавить игркоа в вайтлист или удалить  
 ![image](https://user-images.githubusercontent.com/50948836/163649151-198a2506-d593-4eae-bb61-ffbe2f678ca3.png)
 
-- выдатьдонат {название привелегии} {игрок} {время} - выдать донат через Luckperms или PermissionsEX(настраивается в **slovarik.py**).
+- выдатьдонат {название привелегии} {игрок} {время} - выдать донат через Luckperms или PermissionsEX(настраивается в **slovarik.py**).  
 ![image](https://user-images.githubusercontent.com/50948836/163649170-3d5fe665-da23-4c19-b756-0458ca663e57.png)
 
 В LuckPerms время принимается вида 10y, 5days, 1minute и т.п, в PEX привелегия даётся перманентно.  
