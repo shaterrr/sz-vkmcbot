@@ -62,7 +62,7 @@ pip install vk-api
 ![image](https://user-images.githubusercontent.com/50948836/163649075-176a2694-ea0c-4a1f-919a-41ff457795ea.png)
 
 - всем: {сообщение} - пишет на сервер сообщение через команду say (дефолт майнкрафт команда, принимает цветовые коды майнкрафтовские)  
-- ![image](https://user-images.githubusercontent.com/50948836/163649086-ce6b333b-9642-4bcb-8203-205803413e7c.png)
+![image](https://user-images.githubusercontent.com/50948836/163649086-ce6b333b-9642-4bcb-8203-205803413e7c.png)
 
 - ком {команда без слеша} - отправляет команду которую вы введете, ну типа если просто надо команду ввести которой нет в списке (/execute, /reload и т.п.)  
 ![image](https://user-images.githubusercontent.com/50948836/163649121-903b5703-8108-4b10-a44e-fd61c63ad605.png)
