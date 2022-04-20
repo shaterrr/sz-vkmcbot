@@ -71,7 +71,13 @@ pip install vk-api
 ![image](https://user-images.githubusercontent.com/50948836/163649151-198a2506-d593-4eae-bb61-ffbe2f678ca3.png)
 
 - выдатьдонат {название привелегии} {игрок} {время} - выдать донат через Luckperms или PermissionsEX(настраивается в **slovarik.py**).  
-![image](https://user-images.githubusercontent.com/50948836/163649170-3d5fe665-da23-4c19-b756-0458ca663e57.png)
+![image](https://user-images.githubusercontent.com/50948836/163649170-3d5fe665-da23-4c19-b756-0458ca663e57.png)  
+
+- перезагрузись - перезагружает бота  
+![image](https://user-images.githubusercontent.com/50948836/164236106-e31ff831-a484-485a-8164-0f73fe78d6b5.png)  
+
+- выключись - выключает бота  
+![image](https://user-images.githubusercontent.com/50948836/164236159-0ed30b64-5200-483c-89e6-31cfd2d4a4a8.png)
 
 В LuckPerms время принимается вида 10y, 5days, 1minute и т.п, в PEX привелегия даётся перманентно.  
 
