@@ -95,7 +95,8 @@ pip install vk-api
 В LuckPerms время принимается вида 10y, 5days, 1minute и т.п, в PEX привелегия даётся перманентно.  
 
 - Также присутствует логирование всех команд:  
-![image](https://user-images.githubusercontent.com/50948836/173968188-0a5ed270-a964-48da-92c7-7092dfcb17ac.png)
+![image](https://user-images.githubusercontent.com/50948836/173970645-84863a24-3ca6-4df7-a2a3-613d25579a20.png)
+
 
 
 
