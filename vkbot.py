@@ -17,6 +17,8 @@ give = group_t.get_api()  # берём апи из токена группы
 give2 = my_t.get_api()  # берём апи из вашего токена
 longpoll = VkLongPoll(group_t)  # подключаемся к вк пулу с помощью токена группыы
 try_count = 0
+read_dictionary = np.load('playersdict.npy', allow_pickle='TRUE').item()
+print(read_dictionary)
 
 now = datetime.datetime.now()
 now = now.strftime("%d-%m-%Y %H:%M:%S")  # делает кароче переменную now - форматированным временем (в логи посмотришь, увидишь)
@@ -26,7 +28,7 @@ def writeLog(str): # функция чтобы в логи писать
         log.write(f'{now} - {str}\n') # пишет дату, и через тире сообщение
 
 writeLog('='*50 + '\n' + f'{now} - Начал работу')
-# вот и пример. Пишет 50 знаков = и на следующей строчке сообщение Начал работа
+# вот и пример. Пишет 50 знаков "=" и на следующей строчке сообщение Начал работа
 
 def sendmessage(id, text):
     group_t.method('messages.send', {'user_id': id, 'message': text, 'random_id': 0})
@@ -38,8 +40,11 @@ def pmessage(id): # тут узнавать имя фамилию по айди
     return fullname
 
 def getId(str): # ну тут кароче узнавать айди ВК по короткому именем
-    user = group_t.method("utils.resolveScreenName", {"screen_name": str})
-    return user['object_id']
+    if len(str) == 0:
+        sendmessage(id, 'Пустая строка!')
+    else:
+        user = group_t.method("utils.resolveScreenName", {"screen_name": str})
+        return user['object_id']
 
 
 while try_count < 3:
@@ -199,25 +204,31 @@ def rusruletka(id):
         writeLog(f'Для id:{id} имя:{pmessage(id)} не сработала русская  рулетка')
         pass
     rand = random.randint(0,6)
-
-    if rand == 4:
-        com = rcon.command(f'tempban {nick} 1h Проиграл в русскую рулетку')
-        sendmessage(id, 'О нет! Ты проиграл :(')
-        sendmessage(myvkid, f'@id{id} умер в русской рулетке под ником {nick}')
-        writeLog(f'id:{id} имя:{pmessage(id)} умер в русской рулетке под именем {nick}')
+    bans = rcon.command('banlist').replace('Szarkan','')
+    if nick in bans:
+        sendmessage(id, 'Ты уже умер! Приходи через час!')
     else:
-        sendmessage(id, 'В этот раз тебе повезло...')
-        writeLog(f'id:{id} имя:{pmessage(id)} выйграл в русской рулетке')
+        if rand == 4:
+            com = rcon.command(f'tempban {nick} 6h Проиграл в русскую рулетку')
+            sendmessage(id, 'О нет! Ты проиграл :(')
+            sendmessage(myvkid, f'@id{id} умер в русской рулетке под ником {nick}')
+            writeLog(f'id:{id} имя:{pmessage(id)} умер в русской рулетке под именем {nick}')
+        else:
+            sendmessage(id, 'В этот раз тебе повезло...')
+            writeLog(f'id:{id} имя:{pmessage(id)} выйграл в русской рулетке')
 
 def addPlayerToList(id,idp,nick):
-    playerDict[nick] = idp
-    playerDict[idp] = nick
+    read_dictionary = np.load('playersdict.npy', allow_pickle='TRUE').item()
+    read_dictionary[nick] = idp
+    read_dictionary[idp] = nick
     sendmessage(id, f'Добавил в словарик @id{idp} под ником {nick}!')
-    np.save('playersdict.npy', playerDict)
+    np.save('playersdict.npy', read_dictionary)
     read_dictionary = np.load('playersdict.npy', allow_pickle='TRUE').item()
     writeLog(f'id:{id} имя:{pmessage(id)} добавил в словарик айди {idp} под ником {nick}')
+    print(read_dictionary)
 
 def getPlayerFromList(nick):
+    nick = str(nick)
     read_dictionary = np.load('playersdict.npy', allow_pickle='TRUE').item()
     try:
         b = read_dictionary[nick]
@@ -225,7 +236,10 @@ def getPlayerFromList(nick):
         sendmessage(id, 'Такого игрока нет, правильно ввёл ник или айди?')
         pass
     else:
-        sendmessage(id, f'{nick} это @id{b}')
+        if nick.isdigit():
+            sendmessage(id,f'@id{nick} это {b}')
+        else:
+            sendmessage(id, f'{nick} это @id{b}')
     writeLog(f'id:{id} имя:{pmessage(id)} узнал айди вк игрока {nick}')
 
 # слушаем сообщения
@@ -270,7 +284,6 @@ try:
                         sendmessage(id, f'{getId(idt)}')
                     else:
                         sendmessage(id, 'Ты не админ!')
-
 
                 elif args[0] in unban:  # если из массива анбан
                     if id in adminsid:  # если айди в списке айди админом
@@ -329,6 +342,7 @@ try:
                             else:
                                 sendmessage(id,
                                         f'Телепортировал {player} на координаты x{x} y{y} z{z}')  # ну а здесь он тпает исходя из переменных
+                                writeLog(f'id:{id} имя:{pmessage(id)} телепортировал {player} на координаты x{x} y{y} z{z}')
                         else:
                             sendmessage(id, 'Команда телепорта введена неправильно. Нужно: tp НИК X Y Z')
                     else:
@@ -336,10 +350,12 @@ try:
 
                 elif args[0] == 'всем:':
                     if id in adminsid:
+                        mes1 = ' '.join(args[1:])
                         com = rcon.command(
-                            f'say {message.replace("всем:", "")}')  # просто шлёт всем сообщение через команду say, дефолт майнкрафт
+                            f'say {mes1}')  # просто шлёт всем сообщение через команду say, дефолт майнкрафт
                         sendmessage(id,
                                     f'Написал на сервер собщение: {message.replace("всем:", "")}')  # можно заменить /tellraw @a "{message.replace("всем:","")}", одна хуйня получится
+                        writeLog(f'id:{id} имя:{pmessage(id)} написал на сервер {mes1}')
                     else:
                         sendmessage(id, 'Ты не админ!')
 
@@ -353,6 +369,7 @@ try:
                                 f'lp user {nick} parent addtemp {perm} {time}')
                             sendmessage(id, f'Выдал привелегию {perm} игроку {nick} '
                                             f'на {time}, вывод команды: {com}')
+                            writeLog(f'id:{id} имя:{pmessage(id)} выдал привелегию {perm} игроку {nick} на {time}')
                         elif len(args) < 4:
                             sendmessage(id, 'Команда введена неправильно, отсутствуют '
                                             'параметры. Правильно: выдатьдонат '
@@ -380,30 +397,38 @@ try:
                 elif message == 'выключись':
                     if id in adminsid:
                         sendmessage(id, 'Выключаюсь!')
+                        writeLog(f'id:{id} имя:{pmessage(id)} выключил бота из ВК')
                         print('Бот выключен командой из ВК')
                         sys.exit(0)
                     else:
                         sendmessage(id, 'Ты не админ!')
+                        writeLog(f'id:{id} имя:{pmessage(id)} попытался выключить бота')
                 elif message == 'перезагрузись':
                     if id in adminsid:
                         sendmessage(id, 'Перезагружаюсь!')
+                        writeLog(f'id:{id} имя:{pmessage(id)} перезагрузил бота')
                         os.system("python3 vkbot.py")
                         sys.exit(0)
                     else:
                         sendmessage(id, 'Ты не админ!')
+                        writeLog(f'id:{id} имя:{pmessage(id)} попытался перезагрузить бота')
 
                 # команды для обычных юзеров
                 elif args[0] == 'донат':
                     sendmessage(id,f'Вы можете приобрести донат здесь: {donatelink}')
+                    writeLog(f'id:{id} имя:{pmessage(id)} вызвал донат')
                 elif args[0] == 'ком':  # отправить команду ркон если её нет в этом скрипте чреез слеш
                     rconcommand(message.replace("ком", ""), id)
+                    writeLog(f'id:{id} имя:{pmessage(id)} написал команду на сервер')
                 elif args[0] == 'пися':  # это просто ржака
                     sendmessage(id, 'попа')
+                    writeLog(f'id:{id} имя:{pmessage(id)} пися')
                 elif args[0] == 'юмореска':
                     randhumoreska(id)
+                    writeLog(f'id:{id} имя:{pmessage(id)} вызвал юмореску')
                 elif args[0] == 'пм':
                     if len(args) >= 3:
-                        message1 = args
+                        message1 = args[2:]
                         name = pmessage(id)
                         nick = message1[1]
                         mes = ' '.join(message1[2:len(message1)])
@@ -412,29 +437,35 @@ try:
                         if nick in players.lower():
                             com = rcon.command(f'msg {nick} {name} написал вам: {mes}')
                             sendmessage(id, f'Отправил {nick} личное сообщение: {mes}. Вывод: {com}')
+                            writeLog(f'id:{id} имя:{pmessage(id)} написал сообщение игроку {nick}: {mes}')
                         else:
                             com = rcon.command(f'mail send {nick} {name} написал вам: {mes}')
                             sendmessage(id, f'Отправил {nick} письмо: {mes} Вывод: {com}')
+                            writeLog(f'id:{id} имя:{pmessage(id)} написал  сообщение игроку {nick}: {mes}')
                     else:
                         sendmessage(id, 'Неправильно ввёл! Правильно: пм {ник} {сообщение до 100 слов}')
                 elif args[0] == 'анон':
                     if len(args) >= 3:
                         message1 = args[2:]
-                        nick = message1[1]
+                        nick = args[1]
                         list = rcon.command('list')
                         mes = ' '.join(message1)
                         players = ' '.join(list.split(" ")[10:25])
                         if nick in players.lower():
                             com = rcon.command(f'msg {nick} Вам анонимное послание: {mes}')
                             sendmessage(id, f'Отправил {nick} анонимное письмо: {mes} Вывод: {com}')
+                            writeLog(f'id:{id} имя:{pmessage(id)} написал анонимное сообщение игроку {nick}: {mes}')
                         else:
                             com = rcon.command(f'mail send {nick} Вам анонимное послание: {mes}')
                             sendmessage(id, f'Отправил {nick} анонимное письмо: {mes} Вывод: {com}')
+                            writeLog(f'id:{id} имя:{pmessage(id)} написал анонимное сообщение игроку {nick}: {mes}')
                     else:
                         sendmessage(id, 'Неправильно ввёл! Правильно: анон {ник} {сообщение до 100 слов}')
+                        writeLog(f'id:{id} имя:{pmessage(id)} неправильно ввёл команду анонимного сообщения')
 
                 else:  # если ничего из этого списка не было написано - пишет вот это
-                    sendmessage(id, f'Неизвестная команда. Если у вас есть вопрос, то пишите админу @id{myvkid}')
+                    sendmessage(id, f'Неизвестная команда. Если у вас есть вопрос, то пишите админу @szarkan')
+                    writeLog(f'id:{id} имя:{pmessage(id)} написал что-то непонятное: {message}')
 except Exception as error:  # если чота случилось с вк апи
     try:
         sendmessage(myvkid, f'Я лёг по причине {error}')  # пытаемся отправить сообщение с ошибкой
