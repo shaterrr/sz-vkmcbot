@@ -15,6 +15,7 @@
 pip install mctools
 pip install mcstatus
 pip install vk-api
+pip install numpy
 ```
 А чтобы питон скачать нужно погуглить, потому что так я не вспомню как это делается, но там буквально одна строчка
 И всё
