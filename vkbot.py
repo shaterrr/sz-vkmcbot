@@ -3,7 +3,7 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.bot_longpoll import VkBotEventType, VkBotLongPoll
 from mctools import RCONClient, errors
 from mcstatus import MinecraftServer
-from slovarik_minecraft import *
+from slovarik import *
 import sys
 import os
 import datetime
